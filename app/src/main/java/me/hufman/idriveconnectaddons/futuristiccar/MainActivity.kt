@@ -11,6 +11,7 @@ import android.widget.SeekBar
 import io.bimmergestalt.idriveconnectkit.CDSProperty
 import me.hufman.idriveconnectaddons.futuristiccar.lib.CDSLiveData
 import me.hufman.idriveconnectaddons.futuristiccar.lib.GsonNullable.tryAsDouble
+import me.hufman.idriveconnectaddons.futuristiccar.lib.GsonNullable.tryAsInt
 import me.hufman.idriveconnectaddons.futuristiccar.lib.GsonNullable.tryAsJsonObject
 import me.hufman.idriveconnectaddons.futuristiccar.lib.GsonNullable.tryAsJsonPrimitive
 
@@ -18,7 +19,11 @@ class MainActivity : AppCompatActivity() {
 	val carState = CarState()
 	val speedCalculator = SpeedCalculator(Handler(Looper.getMainLooper()), EngineWeights(), carState)
 	lateinit var audioClip: AudioTrack
+
+	val carRunning by lazy { CDSLiveData(this, CDSProperty.DRIVING_KEYPOSITION) }
 	val carPedalPosition by lazy { CDSLiveData(this, CDSProperty.DRIVING_ACCELERATORPEDAL) }
+	val carGear by lazy { CDSLiveData(this, CDSProperty.DRIVING_GEAR) }
+	val carSpeed by lazy { CDSLiveData(this, CDSProperty.DRIVING_SPEEDACTUAL) }
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -34,11 +39,30 @@ class MainActivity : AppCompatActivity() {
 			val volume = it + 0.5 + volumeAdjust
 			audioClip.setVolume(volume.toFloat())
 		}
+
+		carRunning.observe(this) {
+			val running = it?.tryAsJsonObject("keyPosition")?.tryAsJsonPrimitive("running")?.tryAsInt
+			if (running != null) {
+				carState.running = running == 1
+			}
+		}
+		carGear.observe(this) {
+			val gear = it?.tryAsJsonPrimitive("gear")?.tryAsInt
+			if (gear != null) {
+				carState.drivingGear = gear != 1 && gear != 3
+			}
+		}
 		carPedalPosition.observe(this) {
 			val position = it?.tryAsJsonObject("acceleratorPedal")?.tryAsJsonPrimitive("position")?.tryAsDouble
 			if (position != null) {
 				carState.pedalState = position / 100.0
 				findViewById<SeekBar>(R.id.speed).progress = position.toInt()
+			}
+		}
+		carSpeed.observe(this) {
+			val speed = it?.tryAsJsonPrimitive("speedActual")?.tryAsInt
+			if (speed != null) {
+				carState.speedometer = speed / 100.0
 			}
 		}
 

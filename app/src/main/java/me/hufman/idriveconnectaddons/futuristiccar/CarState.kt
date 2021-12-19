@@ -10,14 +10,18 @@ class CarState {
 	fun getTargetSpeed(): Double {
 		return if (!running) {
 			0.0
+		} else if (!drivingGear) {
+			// while in park/neutral, map the accelerator pedal
+			mapPercentage(pedalState, 0.35)
 		} else {
-			mapPedalState(pedalState)
+			// in driving gear, use the speedometer
+			mapPercentage(speedometer, 0.30)
 		}
 	}
 
-	private fun mapPedalState(input: Double): Double {
+	private fun mapPercentage(input: Double, min: Double): Double {
 		// simplified from https://rosettacode.org/wiki/Map_range
-		// maps 0..1 to 0.3..1
-		return 0.35 + input * 0.65
+		// maps 0..1 to min..1
+		return min + input * (1-min)
 	}
 }
