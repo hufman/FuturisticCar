@@ -15,8 +15,8 @@ import me.hufman.idriveconnectaddons.futuristiccar.lib.GsonNullable.tryAsJsonObj
 import me.hufman.idriveconnectaddons.futuristiccar.lib.GsonNullable.tryAsJsonPrimitive
 
 class MainActivity : AppCompatActivity() {
-	val pedalState = PedalState()
-	val speedCalculator = SpeedCalculator(Handler(Looper.getMainLooper()), EngineWeights(), pedalState)
+	val carState = CarState()
+	val speedCalculator = SpeedCalculator(Handler(Looper.getMainLooper()), EngineWeights(), carState)
 	lateinit var audioClip: AudioTrack
 	val carPedalPosition by lazy { CDSLiveData(this, CDSProperty.DRIVING_ACCELERATORPEDAL) }
 
@@ -26,8 +26,8 @@ class MainActivity : AppCompatActivity() {
 
 		loadAudioClip()
 		speedCalculator.listener = {
-			audioClip.playbackRate = (60000 * it).toInt()
-			val acceleration = pedalState.targetSpeed - speedCalculator.currentSpeed
+			audioClip.playbackRate = (65000 * it).toInt()
+			val acceleration = carState.getTargetSpeed() - speedCalculator.currentSpeed
 			val volumeAdjust = if (acceleration > 0) {
 				acceleration * 2
 			} else { 0.0 }
@@ -37,14 +37,15 @@ class MainActivity : AppCompatActivity() {
 		carPedalPosition.observe(this) {
 			val position = it?.tryAsJsonObject("acceleratorPedal")?.tryAsJsonPrimitive("position")?.tryAsDouble
 			if (position != null) {
-				pedalState.targetSpeed = position / 100.0
+				carState.pedalState = position / 100.0
+				findViewById<SeekBar>(R.id.speed).progress = position.toInt()
 			}
 		}
 
 		findViewById<SeekBar>(R.id.speed).setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
 			override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
 				if (fromUser) {
-					pedalState.targetSpeed = progress / 100.0
+					carState.pedalState = progress / 100.0
 				}
 			}
 
@@ -70,7 +71,7 @@ class MainActivity : AppCompatActivity() {
 		audioClip.write(dataRead, 0, dataRead.size)
 		data.close()
 		audioClip.setLoopPoints(0, dataRead.size / 2, -1)
-		audioClip.playbackRate = (60000 * speedCalculator.currentSpeed).toInt()
+		audioClip.playbackRate = (65000 * speedCalculator.currentSpeed).toInt()
 	}
 
 	override fun onResume() {

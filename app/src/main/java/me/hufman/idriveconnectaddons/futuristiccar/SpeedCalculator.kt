@@ -3,7 +3,7 @@ package me.hufman.idriveconnectaddons.futuristiccar
 import android.os.Handler
 import kotlin.math.sign
 
-class SpeedCalculator(val handler: Handler, val engineWeights: EngineWeights, val pedalState: PedalState) {
+class SpeedCalculator(val handler: Handler, val engineWeights: EngineWeights, val carState: CarState) {
 	val updateInterval = 50L
 	var currentSpeed = 0.5
 
@@ -17,7 +17,7 @@ class SpeedCalculator(val handler: Handler, val engineWeights: EngineWeights, va
 		handler.postDelayed(updateCallback, updateInterval)
 	}
 	fun update() {
-		val difference = pedalState.targetSpeed - currentSpeed
+		val difference = carState.getTargetSpeed() - currentSpeed
 		val factor = if (difference > 0) {       // accelerating
 			engineWeights.speedUp
 		} else {
