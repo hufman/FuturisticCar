@@ -61,13 +61,17 @@ class CarAppService: Service() {
             securityAccess.isConnected() &&
             thread?.isAlive != true) {
 
-            thread = CarThread("ScreenMirroring") {
+            thread = CarThread("FuturisticCar") {
                 Log.i(TAG, "CarThread is ready, starting CarApp")
+                val carState = CarState()
+                val soundController = SoundControllerNotification(this, SoundControllerPlayback(resources, carState))
                 app = CarApp(
                     iDriveConnectionStatus,
                     securityAccess,
                     CarAppAssetResources(applicationContext, "smartthings"),
                     AndroidResources(applicationContext),
+                    carState,
+                    soundController,
                 )
             }
             thread?.start()

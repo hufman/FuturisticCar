@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FuturisticCar</string>
+    <string name="notification_channel_name">Playing Notification</string>
+    <string name="notification_title">Currently playing sound</string>
 </resources>

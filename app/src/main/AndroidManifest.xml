@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.hufman.idriveconnectaddons.futuristiccar">
 
-    <uses-permission android:name="io.bimmergestalt.permission.CDS_normal" />
+    <!-- Connect to local etch port -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -20,9 +21,9 @@
         </activity>
 
         <!-- Become discoverable in the Addons tab -->
-        <service android:name=".MainService">
+        <service android:name=".CarAppService">
             <intent-filter>
-                <action android:name="io.bimmergestalt.cardata.service" />
+                <action android:name="io.bimmergestalt.carconnection.service" />
             </intent-filter>
         </service>
     </application>
