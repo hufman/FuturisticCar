@@ -32,12 +32,6 @@ class MainActivity : AppCompatActivity() {
 		loadAudioClip()
 		speedCalculator.listener = {
 			audioClip.playbackRate = (65000 * it).toInt()
-			val acceleration = carState.getTargetSpeed() - speedCalculator.currentSpeed
-			val volumeAdjust = if (acceleration > 0) {
-				acceleration * 2
-			} else { 0.0 }
-			val volume = it + 0.5 + volumeAdjust
-			audioClip.setVolume(volume.toFloat())
 		}
 
 		carRunning.observe(this) {
