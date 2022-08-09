@@ -53,11 +53,13 @@ class CarApp(val iDriveConnectionStatus: IDriveConnectionStatus, securityAccess:
     }
 
     private fun createAmApp() {
-        if (amHandle < 0) {
-            val handle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
-            carConnection.am_addAppEventHandler(handle, "me.hufman.idriveconnectaddons.futuristiccar")
-            amHandle = handle
+        if (amHandle > 0) {
+            carConnection.am_removeAppEventHandler(amHandle, "me.hufman.idriveconnectaddons.futuristiccar")
+            carConnection.am_dispose(amHandle)
         }
+        val handle = carConnection.am_create("0", "\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000".toByteArray())
+        carConnection.am_addAppEventHandler(handle, "me.hufman.idriveconnectaddons.futuristiccar")
+        amHandle = handle
 
         val icon = if (soundEffectController.isPlaying) R.raw.ic_playing else R.raw.ic_paused
         val amInfo = mutableMapOf<Int, Any>(
