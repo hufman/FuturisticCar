@@ -5,7 +5,7 @@ class CarState {
 		0.0,
 		0.30,
 		0.60,
-		1000.0
+		1.0
 	)
 	var running = true
 	var drivingGear = false     // whether we are in a driving gear, as opposed to park/neutral
@@ -30,7 +30,7 @@ class CarState {
 	}
 
 	private fun adjustSpeedTier() {
-		if (speedTier < SPEED_TIERS.size-1 && speedometer > SPEED_TIERS[speedTier+1] * 1.2) {
+		if (speedTier + 1 < SPEED_TIERS.size && speedometer > SPEED_TIERS[speedTier+1] * 1.2) {
 			speedTier += 1
 		}
 		if (speedTier > 0 && speedometer < SPEED_TIERS[speedTier]) {

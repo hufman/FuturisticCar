@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.0"
+    namespace "me.hufman.idriveconnectaddons.futuristiccar"
 
     defaultConfig {
         applicationId "me.hufman.idriveconnectaddons.futuristiccar"
         minSdkVersion 23
+        compileSdk 34
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
